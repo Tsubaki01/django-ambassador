@@ -6,4 +6,4 @@ COPY requirements.txt ${PWD}
 
 RUN pip install -r requirements.txt
 
-CMD python manage.py runserver 0.0.0.0:8000
+CMD python manage.py wait_for_db && python manage.py runserver 0.0.0.0:8000
