@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'core',
     'administrator',
+    'ambassador',
+    'checkout'
 ]
 
 MIDDLEWARE = [
