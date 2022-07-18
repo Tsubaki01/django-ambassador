@@ -8,32 +8,32 @@ from core.models import User
 
 class JWTAuthentication(BaseAuthentication):
 
-    # def authenticate(self, request):
+    def authenticate(self, request):
     #     is_ambassador = 'api/ambassador' in request.path
 
-    #     token = request.COOKIES.get('jwt')
+        token = request.COOKIES.get('jwt')
 
-    #     if not token:
-    #         return None
+        if not token:
+            return None
 
-    #     try:
-    #         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-    #     except jwt.ExpiredSignatureError:
-    #         raise exceptions.AuthenticationFailed('unauthenticated')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise exceptions.AuthenticationFailed('unauthenticated')
 
     #     if (is_ambassador and payload['scope'] != 'ambassador') or (not is_ambassador and payload['scope'] != 'admin'):
     #         raise exceptions.AuthenticationFailed('Invalid Scope!')
 
-    #     user = User.objects.get(pk=payload['user_id'])
+        user = User.objects.get(pk=payload['user_id'])
 
-    #     if user is None:
-    #         raise exceptions.AuthenticationFailed('User not found!')
+        if user is None:
+            raise exceptions.AuthenticationFailed('User not found!')
 
-    #     return (user, None)
+        return (user, None)
 
-    # @staticmethod
+    @staticmethod
+    def generate_jwt(id):
     # def generate_jwt(id, scope):
-    def generate_jwt(self, id):
         payload = {
             'user_id': id,
             # 'scope': scope,

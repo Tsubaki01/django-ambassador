@@ -1,5 +1,6 @@
+from urllib import response
 from rest_framework import exceptions
-# from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,6 +9,7 @@ from .authentication import JWTAuthentication
 from .serializers import UserSerializer
 
 
+# ユーザー登録機能
 class RegisterAPIView(APIView):
     def post(self, request):
         data = request.data
@@ -24,6 +26,7 @@ class RegisterAPIView(APIView):
         return Response(serializer.data)
 
 
+# ログイン機能
 class LoginAPIView(APIView):
     def post(self, request):
         email = request.data['email']
@@ -37,16 +40,13 @@ class LoginAPIView(APIView):
         if not user.check_password(password):
             raise exceptions.AuthenticationFailed('Incorrect Password!')
         
-        jwt_authentication = JWTAuthentication()
-        
-        
         # scope = 'ambassador' if 'api/ambassador' in request.path else 'admin'
 
         # if user.is_ambassador and scope == 'admin':
         #     raise exceptions.AuthenticationFailed('Unauthorized')
 
         # token = JWTAuthentication.generate_jwt(user.id, scope)
-        token = jwt_authentication.generate_jwt(user.id)
+        token = JWTAuthentication.generate_jwt(user.id)
 
         response = Response()
         response.set_cookie(key='jwt', value=token, httponly=True)
@@ -54,4 +54,34 @@ class LoginAPIView(APIView):
             'message': 'success'
         }
 
+        return response
+
+
+# ユーザー情報取得機能
+class UserAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # user = request.user
+        # data = UserSerializer(user).data
+
+        # if 'api/ambassador' in request.path:
+        #     data['revenue'] = user.revenue
+
+        # return Response(data)
+        return Response(UserSerializer(request.user).data)
+
+
+# ログアウト機能
+class LogoutAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, _):
+        response = Response()
+        response.delete_cookie(key='jwt')
+        response.data = {
+            'message': 'success'
+        }
         return response
