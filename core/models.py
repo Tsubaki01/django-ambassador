@@ -55,6 +55,15 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    @property
+    def name(self):
+        return self.first_name + ' ' + self.last_name
+
+    @property
+    def revenue(self):
+        orders = Order.objects.filter(user_id=self.pk, complete=True)
+        return sum(o.ambassador_revenue for o in orders)
+
 
 # 製品モデル
 class Product(models.Model):
@@ -90,14 +99,14 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # @property
-    # def name(self):
-    #     return self.first_name + ' ' + self.last_name
+    @property
+    def name(self):
+        return self.first_name + ' ' + self.last_name
 
-    # @property
-    # def ambassador_revenue(self):
-    #     items = OrderItem.objects.filter(order_id=self.pk)
-    #     return sum(i.ambassador_revenue for i in items)
+    @property
+    def ambassador_revenue(self):
+        items = OrderItem.objects.filter(order_id=self.pk)
+        return sum(i.ambassador_revenue for i in items)
 
     # @property
     # def admin_revenue(self):
