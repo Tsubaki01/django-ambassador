@@ -40,33 +40,30 @@ class ProductGenericAPIView(
 
     # 製品追加API
     def post(self, request):
-        # response = self.create(request)
-        # for key in cache.keys('*'):
-        #     if 'products_frontend' in key:
-        #         cache.delete(key)
-        # cache.delete('products_backend')
-        # return response
-        return self.create(request)
+        response = self.create(request)
+        for key in cache.keys('*'):
+            if 'products_frontend' in key:
+                cache.delete(key)
+        cache.delete('products_backend')
+        return response
 
     # 製品更新API
     def put(self, request, pk=None):
-        # response = self.partial_update(request, pk)
-        # for key in cache.keys('*'):
-        #     if 'products_frontend' in key:
-        #         cache.delete(key)
-        # cache.delete('products_backend')
-        # return response
-        return self.partial_update(request, pk)
+        response = self.partial_update(request, pk)
+        for key in cache.keys('*'):
+            if 'products_frontend' in key:
+                cache.delete(key)
+        cache.delete('products_backend')
+        return response
 
     # 製品削除API
     def delete(self, request, pk=None):
-        # response = self.destroy(request, pk)
-        # for key in cache.keys('*'):
-        #     if 'products_frontend' in key:
-        #         cache.delete(key)
-        # cache.delete('products_backend')
-        # return response
-        return self.destroy(request, pk)
+        response = self.destroy(request, pk)
+        for key in cache.keys('*'):
+            if 'products_frontend' in key:
+                cache.delete(key)
+        cache.delete('products_backend')
+        return response
 
 
 # リンク情報取得API
