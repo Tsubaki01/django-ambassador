@@ -26,7 +26,7 @@ class RegisterAPIView(APIView):
         return Response(serializer.data)
 
 
-# ログイン機能
+# ログイン機能API
 class LoginAPIView(APIView):
     def post(self, request):
         email = request.data['email']
@@ -57,7 +57,7 @@ class LoginAPIView(APIView):
         return response
 
 
-# ユーザー情報取得機能
+# ユーザー情報取得機能API
 class UserAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -73,7 +73,7 @@ class UserAPIView(APIView):
         return Response(UserSerializer(request.user).data)
 
 
-# ログアウト機能
+# ログアウト機能API
 class LogoutAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -85,3 +85,33 @@ class LogoutAPIView(APIView):
             'message': 'success'
         }
         return response
+
+
+#ユーザー情報更新機能API
+class ProfileInfoAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk=None):
+        user = request.user
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+# ユーザーパスワード更新機能API
+class ProfilePasswordAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk=None):
+        user = request.user
+        data = request.data
+
+        if data['password'] != data['password_confirm']:
+            raise exceptions.APIException('Passwords do not match!')
+
+        user.set_password(data['password'])
+        user.save()
+        return Response(UserSerializer(user).data)
